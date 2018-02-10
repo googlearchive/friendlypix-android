@@ -42,6 +42,8 @@ android {
             signingConfig signingConfigs.release
         }
     }
+
+    flavorDimensions "default"
     productFlavors {
         dev {
         }
