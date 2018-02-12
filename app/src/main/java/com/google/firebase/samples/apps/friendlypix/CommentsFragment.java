@@ -19,6 +19,7 @@ package com.google.firebase.samples.apps.friendlypix;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -59,7 +61,7 @@ public class CommentsFragment extends Fragment {
     private static final String POST_REF_PARAM = "post_ref_param";
     private static final int DEFAULT_MSG_LENGTH_LIMIT = 256;
     private EditText mEditText;
-    private RecyclerView.Adapter<CommentViewHolder> mAdapter;
+    private FirebaseRecyclerAdapter<Comment, CommentViewHolder> mAdapter;
 
     private String mPostRef;
 
@@ -102,11 +104,24 @@ public class CommentsFragment extends Fragment {
         final Button sendButton = (Button) rootView.findViewById(R.id.send_comment);
 
         final DatabaseReference commentsRef = FirebaseUtil.getCommentsRef().child(mPostRef);
-        mAdapter = new FirebaseRecyclerAdapter<Comment, CommentViewHolder>(
-                Comment.class, R.layout.comment_item, CommentViewHolder.class, commentsRef) {
+
+        FirebaseRecyclerOptions<Comment> options = new FirebaseRecyclerOptions.Builder<Comment>()
+                .setQuery(commentsRef, Comment.class)
+                .build();
+
+        mAdapter = new FirebaseRecyclerAdapter<Comment, CommentViewHolder>(options) {
             @Override
-            protected void populateViewHolder(final CommentViewHolder viewHolder,
-                                              Comment comment, int position) {
+            public CommentViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.comment_item, parent, false);
+
+                return new CommentViewHolder(view);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull CommentViewHolder viewHolder,
+                                            int position,
+                                            @NonNull Comment comment) {
                 Author author = comment.getAuthor();
                 viewHolder.commentAuthor.setText(author.getFull_name());
                 GlideUtil.loadProfileIcon(author.getProfile_picture(), viewHolder.commentPhoto);
@@ -118,6 +133,9 @@ public class CommentsFragment extends Fragment {
                 viewHolder.commentText.setText(comment.getText());
             }
         };
+
+        mAdapter.startListening();
+
         sendButton.setEnabled(false);
         mEditText.setHint(R.string.new_comment_hint);
         mEditText.setFilters(new InputFilter[]{new InputFilter.LengthFilter
@@ -185,8 +203,8 @@ public class CommentsFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mAdapter != null && mAdapter instanceof FirebaseRecyclerAdapter) {
-            ((FirebaseRecyclerAdapter) mAdapter).cleanup();
+        if (mAdapter != null) {
+            mAdapter.stopListening();
         }
     }
 

@@ -18,6 +18,7 @@ package com.google.firebase.samples.apps.friendlypix;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +29,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -213,22 +215,30 @@ public class PostsFragment extends Fragment {
             default:
                 throw new RuntimeException("Illegal post fragment type specified.");
         }
+
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private FirebaseRecyclerAdapter<Post, PostViewHolder> getFirebaseRecyclerAdapter(Query query) {
-        return new FirebaseRecyclerAdapter<Post, PostViewHolder>(
-                Post.class, R.layout.post_item, PostViewHolder.class, query) {
+        FirebaseRecyclerOptions<Post> options = new FirebaseRecyclerOptions.Builder<Post>()
+                .setLifecycleOwner(this)
+                .setQuery(query, Post.class)
+                .build();
+
+        return new FirebaseRecyclerAdapter<Post, PostViewHolder>(options) {
             @Override
-            public void populateViewHolder(final PostViewHolder postViewHolder,
-                                           final Post post, final int position) {
+            protected void onBindViewHolder(@NonNull PostViewHolder postViewHolder,
+                                            int position,
+                                            @NonNull Post post) {
                 setupPost(postViewHolder, post, position, null);
             }
 
             @Override
-            public void onViewRecycled(PostViewHolder holder) {
-                super.onViewRecycled(holder);
-//                FirebaseUtil.getLikesRef().child(holder.mPostKey).removeEventListener(holder.mLikeListener);
+            public PostViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.post_item, parent, false);
+
+                return new PostViewHolder(view);
             }
         };
     }
@@ -282,15 +292,6 @@ public class PostsFragment extends Fragment {
             }
         });
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mAdapter != null && mAdapter instanceof FirebaseRecyclerAdapter) {
-            ((FirebaseRecyclerAdapter) mAdapter).cleanup();
-        }
-    }
-
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {

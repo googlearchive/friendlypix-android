@@ -290,21 +290,29 @@ public class NewPostUploadTaskFragment extends Fragment {
         return inSampleSize;
     }
 
+    private InputStream streamFromUri(Uri fileUri) throws FileNotFoundException {
+        return new BufferedInputStream(
+                mApplicationContext.getContentResolver().openInputStream(fileUri));
+    }
+
     public Bitmap decodeSampledBitmapFromUri(Uri fileUri, int reqWidth, int reqHeight)
             throws IOException {
-        InputStream stream = new BufferedInputStream(
-                mApplicationContext.getContentResolver().openInputStream(fileUri));
+
+        // First decode with inJustDecodeBounds=true to check dimensions
+        InputStream stream = streamFromUri(fileUri);
         stream.mark(stream.available());
         BitmapFactory.Options options = new BitmapFactory.Options();
-        // First decode with inJustDecodeBounds=true to check dimensions
         options.inJustDecodeBounds = true;
         BitmapFactory.decodeStream(stream, null, options);
         stream.reset();
+
+        // Decode bitmap with inSampleSize set
         options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
         options.inJustDecodeBounds = false;
         BitmapFactory.decodeStream(stream, null, options);
-        // Decode bitmap with inSampleSize set
-        stream.reset();
-        return BitmapFactory.decodeStream(stream, null, options);
+        stream.close();
+
+        InputStream freshStream = streamFromUri(fileUri);
+        return BitmapFactory.decodeStream(freshStream, null, options);
     }
 }

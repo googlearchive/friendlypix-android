@@ -29,7 +29,6 @@
     <!-- Content Description for images -->
     <string name="desc_google_icon">Google Logo</string>
     <string name="server_client_id_web">85010793512-guh26t71dh519hp1il371it4bq4kil0h.apps.googleusercontent.com</string>
-    <string name="project_id">friendlypix-4fa22</string>
     <string name="title_activity_welcome">FriendlyPix</string>
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
