@@ -7,6 +7,11 @@ Have a look at the [Web](web), [Android](android) or [iOS](ios) app for more det
 Visit [friendly-pix.com](https://friendly-pix.com) to try a hosted instance of the web app.
 
 
+## Cloud Functions
+
+The required Cloud Functions can be found at [FriendlyPix Web Repository](https://github.com/firebase/friendlypix-web/tree/master/functions).
+
+
 ## Contributing
 
 We'd love that you contribute to the project. Before doing so please read our [Contributor guide](CONTRIBUTING.md).
