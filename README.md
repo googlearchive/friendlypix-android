@@ -7,9 +7,9 @@ Have a look at the [Web](web), [Android](android) or [iOS](ios) app for more det
 Visit [friendly-pix.com](https://friendly-pix.com) to try a hosted instance of the web app.
 
 
-## Cloud Functions
+## Requirements
 
-The required Cloud Functions can be found at [FriendlyPix Web Repository](https://github.com/firebase/friendlypix-web/tree/master/functions).
+The mobile FriendlyPix app need the Cloud Functions, the Realtime Database rules and the Cloud Storage rules to be deployed to work properly. You can find instructions at [FriendlyPix Web Repository](https://github.com/firebase/friendlypix-web/blob/master/README.md#mobile-apps).
 
 
 ## Contributing
