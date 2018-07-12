@@ -20,3 +20,7 @@ We'd love that you contribute to the project. Before doing so please read our [C
 ## License
 
 © Google, 2016. Licensed under an [Apache-2](LICENSE) license.
+
+[web]: https://github.com/firebase/friendlypix-web
+[android]:https://github.com/firebase/friendlypix-android
+[ios]: https://github.com/firebase/friendlypix-ios
