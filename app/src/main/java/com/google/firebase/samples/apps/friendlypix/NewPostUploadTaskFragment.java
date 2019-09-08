@@ -166,7 +166,7 @@ public class NewPostUploadTaskFragment extends Fragment {
             fullSizeRef.putBytes(bytes).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    final Uri fullSizeUrl = taskSnapshot.getDownloadUrl();
+                    final Uri fullSizeUrl = fullSizeRef.getDownloadUrl().getResult();
 
                     ByteArrayOutputStream thumbnailStream = new ByteArrayOutputStream();
                     thumbnail.compress(Bitmap.CompressFormat.JPEG, 70, thumbnailStream);
@@ -177,7 +177,7 @@ public class NewPostUploadTaskFragment extends Fragment {
                             final DatabaseReference ref = FirebaseUtil.getBaseRef();
                             DatabaseReference postsRef = FirebaseUtil.getPostsRef();
                             final String newPostKey = postsRef.push().getKey();
-                            final Uri thumbnailUrl = taskSnapshot.getDownloadUrl();
+                            final Uri thumbnailUrl = thumbnailRef.getDownloadUrl().getResult();
 
                             Author author = FirebaseUtil.getAuthor();
                             if (author == null) {
